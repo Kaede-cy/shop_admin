@@ -6,13 +6,14 @@
           </div>
           <!-- 侧边栏菜单 -->  
         <el-menu
-            default-active="1"
+            :default-active="activePath"
             background-color="#333744"
             text-color="#fff"
             active-text-color="#409eff"
             :class="{aside_content_hide:isHiding,aside_content_show:!isHiding}"
+            router
         >
-            <el-menu-item index="1">
+            <el-menu-item index="/welcome" @click="pathSwitch()">
             <!-- 一级菜单 -->
             <template slot="title">
                 <!-- 图标 -->
@@ -29,7 +30,7 @@
                 <!-- 文本 -->
                 <span>{{item.authName}}</span>
             </template>
-            <el-menu-item v-for="subItem in item.children" :key="subItem.id" :index="subItem.id+''">
+            <el-menu-item v-for="subItem in item.children" :key="subItem.id" :index="'/'+subItem.path" @click="pathSwitch(item.authName,subItem.authName)">
                 <!-- 图标 -->
                 <i class="el-icon-menu"></i>
                 <!-- 文本 -->
@@ -37,13 +38,18 @@
             </el-menu-item>
             </el-submenu>
         </el-menu>
+        <breadcrumb></breadcrumb>
     </div>
 </template>
 <script>
+import Breadcrumb from './Breadcrumb'
+
 export default {
+    components:{Breadcrumb},
     name:'Aside',
     created(){
         this.getMenuList();
+        this.activePath=this.$route.path
     },
     data(){
         return {
@@ -55,7 +61,8 @@ export default {
                 '订单管理':'el-icon-s-order',
                 '数据统计':'el-icon-s-data'
             },
-            isHiding : false
+            isHiding : false,
+            activePath:''
         }
     },
     methods: {
@@ -67,7 +74,13 @@ export default {
         },
         asideToggle(){
             this.isHiding=!this.isHiding
-        }
+        },
+        pathSwitch(item,subItem){
+            this.activePath=this.$route.path
+            window.sessionStorage.setItem('item',item)
+            window.sessionStorage.setItem('subItem',subItem)
+        },
+
     },
 }
 </script>
@@ -123,6 +136,19 @@ export default {
     .el-menu {
         border: none;
         height: 100%;
+    }
+
+    .bread{
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 230px;
+    }
+    @media screen and (max-width: 576px) {
+        .bread {
+            left: 150px;
+        }
+        
     }
 }
 @media screen and (max-width: 576px){

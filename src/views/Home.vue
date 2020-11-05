@@ -7,11 +7,10 @@
       </el-header>
       <el-container>
         <!-- 侧边栏 -->
-        <Aside></Aside>
+        <Aside style="z-index:1000"></Aside>
         <!-- 页面主体开始 -->
         <el-main>
-            <div>
-            </div> 
+            <router-view></router-view>
         </el-main>
         <!-- 页面主体结束 -->
       </el-container>
@@ -19,7 +18,7 @@
   </div>
 </template>
 
-<style lang="less" scoped>
+<style lang="less">
 .home {
   height: 100%;
 }
@@ -27,18 +26,21 @@
   height: 100%;
 }
 .el-header {
-  padding-left: 0;
+  padding-left: 0 !important;
 }
 
 .el-main {
   background-color: #eaedf1;
-  margin-top: 40px;
-  div {
-      height: 2000px;
-      width: 200px;
-      background-color: pink;
+  padding-top: 60px !important;
+  padding-left: 230px !important;
+}
+
+@media screen and (max-width: 576px){
+  .el-main {
+    padding-left: 20px !important;
   }
 }
+
 </style>
 
 <script>

@@ -35,7 +35,7 @@
                       placeholder="在此输入账号"
                       prefix-icon="el-icon-user"
                       v-model="form.username"
-                      prop="uanme"
+                      prop="username"
                     ></el-input>
                   </el-form-item>
                   <el-form-item label="密码" prop="password">
@@ -44,7 +44,7 @@
                       show-password
                       prefix-icon="el-icon-lock"
                       v-model="form.password"
-                      prop="upwd"
+                      prop="password"
                     ></el-input>
                   </el-form-item>
                   <el-form-item class="btns">
@@ -138,16 +138,16 @@ export default {
     return {
       // 登录表单数据对象
       form: {
-        username: 'admin',
-        password: '123456',
+        username: '',
+        password: '',
       },
       // 登录表单验证规则
       rules: {
-        uname: [
+        username: [
           { required: true, message: '用户名不能为空', trigger: 'blur' },
           { min: 3, max: 8, message: '用户名长度在3~8位之间', tigger: 'blur' },
         ],
-        upwd: [
+        password: [
           { required: true, message: '密码不能为空', trigger: 'blur' },
           { min: 3, max: 16, message: '密码超出范围', trigger: 'blur' },
         ],
@@ -159,6 +159,7 @@ export default {
       this.$refs.loginRef.resetFields();
     },
     login() {
+      console.log(this.$refs.login);
       this.$refs.loginRef.validate((valid) => {
         if (!valid) {
           this.$alert('请按提示输入账号密码', '', {
