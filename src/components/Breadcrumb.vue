@@ -2,8 +2,8 @@
     <div class="bread">
             <el-breadcrumb separator-class="el-icon-arrow-right">
                 <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                <el-breadcrumb-item>{{item}}</el-breadcrumb-item>
-                <el-breadcrumb-item>{{subItem}}</el-breadcrumb-item>
+                <el-breadcrumb-item v-show="item">{{item}}</el-breadcrumb-item>
+                <el-breadcrumb-item v-show="subItem">{{subItem}}</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
 </template>
