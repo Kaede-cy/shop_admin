@@ -13,7 +13,7 @@
             :class="{aside_content_hide:isHiding,aside_content_show:!isHiding}"
             router
         >
-            <el-menu-item index="/welcome" @click="pathSwitch()">
+            <el-menu-item index="/welcome">
             <!-- 一级菜单 -->
             <template slot="title">
                 <!-- 图标 -->
@@ -30,7 +30,7 @@
                 <!-- 文本 -->
                 <span>{{item.authName}}</span>
             </template>
-            <el-menu-item v-for="subItem in item.children" :key="subItem.id" :index="'/'+subItem.path" @click="pathSwitch(item.authName,subItem.authName)">
+            <el-menu-item v-for="subItem in item.children" :key="subItem.id" :index="'/'+subItem.path">
                 <!-- 图标 -->
                 <i class="el-icon-menu"></i>
                 <!-- 文本 -->
@@ -75,12 +75,6 @@ export default {
         asideToggle(){
             this.isHiding=!this.isHiding
         },
-        pathSwitch(item,subItem){
-            this.activePath=this.$route.path
-            window.sessionStorage.setItem('item',item)
-            window.sessionStorage.setItem('subItem',subItem)
-        },
-
     },
 }
 </script>
@@ -139,10 +133,11 @@ export default {
     }
 
     .bread{
-        width: 100%;
+        width: 2440px;
         position: absolute;
         top: 0;
         left: 230px;
+        background-color: #eaedf1;
     }
     @media screen and (max-width: 576px) {
         .bread {

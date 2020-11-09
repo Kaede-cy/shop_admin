@@ -81,6 +81,7 @@
                 type="success"
                 icon="el-icon-setting"
                 size="mini"
+                @click="setRole(scope.row)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -150,6 +151,30 @@
         <el-button type="primary" @click="editUserInfo()"
           >确 定</el-button
         >
+      </span>
+    </el-dialog>
+    <!-- 分配用户角色对话框 -->
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoleDialogVisible"
+      width="50%">
+      <div>
+        <p>用户名：{{user.username}}</p>
+        <p>当前用户角色：{{user.role_name}}</p>
+        <p>
+          <el-select v-model="selectedRoleId" placeholder="请选择">
+            <el-option
+              v-for="item in rolesList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="changeRole()">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -247,6 +272,13 @@ export default {
           { validator: checkMobile, trigger: "blur" }
         ]
       },
+      setRoleDialogVisible:false,
+      // 暂存分配角色对话框被打开的用户信息
+      user:{},
+      // 所有角色列表
+      rolesList:[],
+      // 选中的角色id
+      selectedRoleId:''
     };
   },
   methods: {
@@ -357,6 +389,27 @@ export default {
       }).catch(err=>{
         return err
       })
+    },
+    // 展示分配角色对话框
+    async setRole(user){
+      // 把用户信息暂存到data以备接口调用
+      this.user=user
+      // 展示对话框前获取角色列表
+      let {data:res} = await this.axios.get('/roles')
+      if(res.meta.status!==200) return this.$message.error('获取角色列表失败');
+      console.log(res);
+      this.rolesList=res.data
+      this.selectedRoleId=''
+      this.setRoleDialogVisible=true
+    },
+    // 修改用户角色
+    async changeRole(){
+      if(!this.selectedRoleId) return this.$message.error('请选择要分配的角色')
+      let {data:res}= await this.axios.put(`users/${this.user.id}/role`,{rid:this.selectedRoleId})
+      if(res.meta.status!==200) return this.$message.error('分配角色失败');
+      this.$message.success('分配角色成功');
+      this.setRoleDialogVisible=false
+      this.getUserList()
     }
   },
 };

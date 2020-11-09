@@ -3,7 +3,7 @@
     <el-container>
       <!-- 页头 -->
       <el-header>
-          <Header></Header>
+          <Header style="z-index:1000"></Header>
       </el-header>
       <el-container>
         <!-- 侧边栏 -->

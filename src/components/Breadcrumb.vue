@@ -1,10 +1,12 @@
 <template>
-    <div class="bread">
-            <el-breadcrumb separator-class="el-icon-arrow-right">
-                <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                <el-breadcrumb-item v-show="item">{{item}}</el-breadcrumb-item>
-                <el-breadcrumb-item v-show="subItem">{{subItem}}</el-breadcrumb-item>
+    <div class="bread">   
+            <el-breadcrumb separator="/">
+                <el-breadcrumb-item :to="{path: '/home'}">首页</el-breadcrumb-item>
+                <el-breadcrumb-item v-for="(item, index) in $route.meta" :key="index">
+                {{item}}
+                </el-breadcrumb-item>
             </el-breadcrumb>
+
         </div>
 </template>
 
@@ -18,10 +20,6 @@
 <script>
 export default {
     name:'Breadcrumb',
-    created(){
-        this.item=window.sessionStorage.getItem('item')
-        this.subItem=window.sessionStorage.getItem('subItem')
-    },
     data() {
         return {
             item:'',
