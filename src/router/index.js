@@ -6,6 +6,7 @@ import Welcome from '../views/Welcome.vue'
 import Users from '../views/user/Users.vue'
 import Rights from '../views/powers/Rights.vue'
 import Roles from '../views/powers/Roles.vue'
+import Categories from '../views/goods/Categories.vue'
 
 Vue.use(VueRouter)
 
@@ -43,6 +44,11 @@ const routes = [
       path:'/roles',
       component:Roles,
       meta:['权限管理','角色列表']
+    },
+    {
+      path:'/categories',
+      component:Categories,
+      meta:['商品管理','商品分类']
     },
   ]
 }

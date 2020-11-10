@@ -312,7 +312,7 @@ export default {
       this.queryInfo.pagenum = newPage;
       this.getUserList();
     },
-    // 充值搜索框
+    // 重置搜索框
     resetSearch() {
       this.queryInfo.query = "";
       this.getUserList();
