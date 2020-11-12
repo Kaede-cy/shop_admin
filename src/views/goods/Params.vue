@@ -39,7 +39,37 @@
             >添加参数</el-button
           >
           <el-table :data="manyTableData" border stripe>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-tag
+                  v-for="(item, index) in scope.row.attr_vals"
+                  :key="index"
+                  closable
+                  class="vals_tag"
+                  @close="handleClose(index, scope.row)"
+                  >{{ item }}</el-tag
+                >
+                <!-- 输入文本框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <!-- 输入按钮，与文本框通过v-if切换 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                  >+ 新参数</el-button
+                >
+              </template>
+            </el-table-column>
             <el-table-column type="index"></el-table-column>
             <el-table-column
               label="参数名称"
@@ -73,7 +103,37 @@
             >添加属性</el-button
           >
           <el-table :data="onlyTableData" border stripe>
-            <el-table-column type="expand"></el-table-column>
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <el-tag
+                  v-for="(item, index) in scope.row.attr_vals"
+                  :key="index"
+                  closable
+                  class="vals_tag"
+                  @close="handleClose(index, scope.row)"
+                  >{{ item }}</el-tag
+                >
+                <!-- 输入文本框 -->
+                <el-input
+                  class="input-new-tag"
+                  v-if="scope.row.inputVisible"
+                  v-model="scope.row.inputValue"
+                  ref="saveTagInput"
+                  size="small"
+                  @keyup.enter.native="handleInputConfirm(scope.row)"
+                  @blur="handleInputConfirm(scope.row)"
+                >
+                </el-input>
+                <!-- 输入按钮，与文本框通过v-if切换 -->
+                <el-button
+                  v-else
+                  class="button-new-tag"
+                  size="small"
+                  @click="showInput(scope.row)"
+                  >+ 新参数</el-button
+                >
+              </template>
+            </el-table-column>
             <el-table-column type="index"></el-table-column>
             <el-table-column
               label="属性名称"
@@ -205,6 +265,12 @@ export default {
     // 级联选择框选中项修改时触发
     cascaderChange() {
       this.getParamsData();
+      console.log(this.selectedKeys.length);
+      if (this.selectedKeys.length !== 3) {
+        (this.selectedKeys = []),
+          (this.manyTableData = []),
+          (this.onlyTableData = []);
+      }
     },
     async getParamsData() {
       // 如果选中的不是三级分类（选中数组长度不为3），则不执行操作并清空数组
@@ -220,9 +286,19 @@ export default {
       );
       if (res.meta.status !== 200)
         return this.$message.error("获取参数列表失败");
+      console.log(res);
+      // 把接收到的数据的vals字符串分割成数组
+      // 并判断该参数的vals是否为空
+      res.data.forEach((item) => {
+        item.attr_vals = item.attr_vals
+          ? (item.attr_vals = item.attr_vals.split(" "))
+          : [];
+        // 分别给每个参数设置输入框的可视性变量与文本框输入值
+        item.inputVisible = false;
+        item.inputValue = "";
+      });
       //   判断是在哪个标签请求数据，并把数据存储到不同的变量
       // 以便在页面中渲染出静态和动态两个表格
-      console.log(res);
       if (this.activeName === "many") {
         this.manyTableData = res.data;
       } else {
@@ -318,6 +394,49 @@ export default {
         this.getParamsData();
       }
     },
+    // 文本框失去焦点或按下enter触发事件
+    async handleInputConfirm(data) {
+      // 判断输入值是否有效，若无效，则清空输入框并显示添加按钮
+      console.log(data);
+      if (data.inputValue.trim().length === 0) {
+        data.inputValue = "";
+        data.inputVisible = false;
+        return;
+      }
+      // 输入值有效则发送添加参数请求，并刷新页面数据
+      data.attr_vals.push(data.inputValue);
+      data.inputValue = "";
+      data.inputVisible = false;
+      this.setAttrVals(data);
+    },
+    // 点解扩展添加按钮，显示添加文本框
+    showInput(data) {
+      data.inputVisible = true;
+      // 文本框显示后自动获得焦点
+      // $nextTick方法：当页面上元素被重新渲染时，执行回调函数的代码
+      this.$nextTick((_) => {
+        this.$refs.saveTagInput.$refs.input.focus();
+      });
+    },
+    // 控制参数tab删除事件，接收参数在数组中的索引及本行参数数据
+    handleClose(index, data) {
+      data.attr_vals.splice(index, 1);
+      this.setAttrVals(data);
+    },
+    // 发起修改tab参数请求
+    async setAttrVals(data) {
+      let { data: res } = await this.axios.put(
+        `/categories/${this.selectedKeys[2]}/attributes/${data.attr_id}`,
+        {
+          attr_name: data.attr_name,
+          attr_sel: this.activeName,
+          attr_vals: data.attr_vals.join(" "),
+        }
+      );
+      console.log(res);
+      if (res.meta.status !== 200) return this.$message.error("添加参数失败");
+      this.$message.success("添加参数成功");
+    },
   },
   computed: {
     //   控制按钮是否可用
@@ -343,5 +462,11 @@ export default {
 }
 .btn {
   margin-bottom: 25px;
+}
+.vals_tag {
+  margin: 5px;
+}
+.input-new-tag {
+  width: 15%;
 }
 </style>
