@@ -10,6 +10,7 @@ import Categories from '../views/goods/Categories.vue'
 import Params from '../views/goods/Params.vue'
 import List from '../views/goods/List.vue'
 import Add from '../views/goods/Add.vue'
+import Order from '../views/order/Order.vue'
 
 Vue.use(VueRouter)
 
@@ -67,6 +68,11 @@ const routes = [
       path:'/goods/add',
       component:Add,
       meta:['商品管理','添加商品']
+    },
+    {
+      path:'/orders',
+      component:Order,
+      meta:['订单管理','订单列表']
     },
   ]
 }
