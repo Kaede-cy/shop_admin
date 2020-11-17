@@ -8,6 +8,8 @@ import Rights from '../views/powers/Rights.vue'
 import Roles from '../views/powers/Roles.vue'
 import Categories from '../views/goods/Categories.vue'
 import Params from '../views/goods/Params.vue'
+import List from '../views/goods/List.vue'
+import Add from '../views/goods/Add.vue'
 
 Vue.use(VueRouter)
 
@@ -50,10 +52,21 @@ const routes = [
       path:'/categories',
       component:Categories,
       meta:['商品管理','商品分类']
-    },{
+    },
+    {
       path:'/params',
       component:Params,
       meta:['商品管理','分类参数']
+    },
+    {
+      path:'/goods',
+      component:List,
+      meta:['商品管理','分类参数']
+    },
+    {
+      path:'/goods/add',
+      component:Add,
+      meta:['商品管理','添加商品']
     },
   ]
 }
@@ -63,6 +76,9 @@ const router = new VueRouter({
   routes
 })
 //挂在路由导航守卫
+// 参数分别为：to   要跳转到的页面
+          // from   从哪个页面跳转
+          // next   判断后执行的回调函数，其中的参数表示将跳转到的页面
 router.beforeEach((to,from,next)=>{
   if(to.path==='/login') return next();
   let token=window.sessionStorage.getItem('token');
